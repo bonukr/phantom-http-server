@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      H2H_SETTING_FILE: /app/setting.yml
+    volumes:
+      - ./setting.yml:/app/setting.yml:ro
+      - ./logs:/app/logs

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="obsidian">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Request Detail</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/themes.css" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/theme.js"></script>
+</head>
+<body>
+    <div class="popup-page">
+        <header class="popup-header">
+            <div>
+                <h1 id="title">Request Detail</h1>
+                <p id="subtitle">#--</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <div class="theme-picker">
+                    <label for="theme-select">Theme</label>
+                    <select id="theme-select" data-theme-select aria-label="테마 선택"></select>
+                </div>
+                <button class="btn btn-outline btn-sm" id="btn-close">Close</button>
+            </div>
+        </header>
+        <div id="detail"></div>
+    </div>
+
+    <script>
+    "use strict";
+
+    PhantomTheme.initTheme();
+    PhantomTheme.bindThemeSelect(document.getElementById("theme-select"));
+
+    const STORAGE_KEY = "phantom-detail-entry";
+
+    function escapeHtml(s) {
+        return String(s ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function formatTime(ts) {
+        return new Date(ts).toLocaleString("ko-KR", { hour12: false });
+    }
+
+    function methodChip(method) {
+        return `<span class="chip chip-${escapeHtml(method)}">${escapeHtml(method)}</span>`;
+    }
+
+    function renderDetail(entry) {
+        if (!entry) return;
+
+        document.title = `${entry.method} ${entry.path} · phantom-http-server`;
+        document.getElementById("title").innerHTML =
+            `${methodChip(entry.method)} ${escapeHtml(entry.path)}`;
+        document.getElementById("subtitle").textContent =
+            `#${entry.id} · ${formatTime(entry.time)} · ${entry.clientIp}`;
+
+        let body = entry.body || "";
+        try {
+            if (body.startsWith("{") || body.startsWith("[")) {
+                body = JSON.stringify(JSON.parse(body), null, 2);
+            }
+        } catch (_) {}
+
+        const headers = Object.entries(entry.headers || {})
+            .map(([k, v]) => `${k}: ${v}`).join("\n");
+
+        document.getElementById("detail").innerHTML = `
+            <div class="detail-meta-grid">
+                <div class="meta-item"><span>Method</span><strong>${escapeHtml(entry.method)}</strong></div>
+                <div class="meta-item"><span>Status</span><strong>${entry.status}</strong></div>
+                <div class="meta-item"><span>Client</span><strong>${escapeHtml(entry.clientIp)}</strong></div>
+                <div class="meta-item"><span>Body size</span><strong>${entry.bodySize} bytes</strong></div>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-section">
+                    <div class="detail-section-head">Query String</div>
+                    <pre>${escapeHtml(entry.query || "(none)")}</pre>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-section-head">Headers</div>
+                    <pre>${escapeHtml(headers || "(none)")}</pre>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-section-head">Body</div>
+                    <pre>${escapeHtml(body || "(empty)")}</pre>
+                </div>
+            </div>`;
+    }
+
+    function loadEntry() {
+        try {
+            const raw = sessionStorage.getItem(STORAGE_KEY);
+            if (raw) renderDetail(JSON.parse(raw));
+        } catch (_) {}
+    }
+
+    window.addEventListener("message", (ev) => {
+        if (ev.origin !== window.location.origin) return;
+        if (ev.data && ev.data.type === "phantom-detail-update") {
+            renderDetail(ev.data.entry);
+        }
+    });
+
+    document.getElementById("btn-close").addEventListener("click", () => window.close());
+    loadEntry();
+    </script>
+</body>
+</html>

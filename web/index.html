@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="obsidian">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>phantom-http-server</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/themes.css" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/theme.js"></script>
+</head>
+<body>
+    <div class="app-shell">
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-icon" aria-hidden="true">📡</div>
+                <div class="brand-text">
+                    <h1>phantom-http-server</h1>
+                    <p>Virtual HTTP/HTTPS &amp; REST API simulator</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="status-group" id="status">
+                    <span class="badge" id="pill-config"><span class="badge-dot"></span>Config --</span>
+                    <span class="badge" id="pill-scheme"><span class="badge-dot"></span>Scheme --</span>
+                    <span class="badge" id="pill-apis"><span class="badge-dot"></span>APIs --</span>
+                    <span class="badge" id="pill-uptime"><span class="badge-dot"></span>Uptime --</span>
+                </div>
+
+                <div class="theme-picker">
+                    <label for="theme-select">Theme</label>
+                    <select id="theme-select" data-theme-select aria-label="테마 선택"></select>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <aside class="card api-panel">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="card-icon" aria-hidden="true">🔗</div>
+                        <div>
+                            <h2 class="card-title">API Endpoints</h2>
+                            <p class="card-subtitle">Click to filter logs</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <ul id="api-list" class="api-list"></ul>
+                </div>
+            </aside>
+
+            <section class="card logs-panel">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="card-icon" aria-hidden="true">📋</div>
+                        <div>
+                            <h2 class="card-title">Request Logs</h2>
+                            <p class="card-subtitle">Real-time stream · click to open detail</p>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-outline btn-sm" id="btn-clear-filter">Clear filter</button>
+                        <button class="btn btn-outline btn-sm" id="btn-pause">Pause</button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-field">
+                            <span class="form-label">API</span>
+                            <select id="filter-path" class="select">
+                                <option value="">All endpoints</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <span class="form-label">Method</span>
+                            <select id="filter-method" class="select">
+                                <option value="">All methods</option>
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                                <option value="PATCH">PATCH</option>
+                            </select>
+                        </div>
+                        <div class="form-field grow">
+                            <span class="form-label">Search</span>
+                            <input type="search" id="filter-text" class="input input-search"
+                                placeholder="Search body, headers, query, client IP..." />
+                        </div>
+                    </div>
+
+                    <div id="logs-empty" class="empty-state">
+                        <div class="empty-icon" aria-hidden="true">⏳</div>
+                        <p>Waiting for API requests</p>
+                        <small>Send a request to any configured endpoint to see logs here</small>
+                    </div>
+                    <div id="logs" class="logs-scroll hidden"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast" class="toast hidden" role="status"></div>
+
+    <script>
+        PhantomTheme.initTheme();
+        PhantomTheme.bindThemeSelect(document.getElementById("theme-select"));
+    </script>
+    <script src="/static/app.js"></script>
+</body>
+</html>

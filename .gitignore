@@ -27,6 +27,22 @@ go.work.sum
 # env file
 .env
 
+# runtime logs
+logs/
+*.log
+
+# local settings (use settings.example/ as template)
+setting.yml
+
+# dist build output (scripts under dist/ are tracked)
+dist/phantom-http-server
+dist/phantom-http-server-amd64
+dist/logs/
+dist/web/
+dist/setting.yml
+dist/*.pid
+dist/phantom-http-server.env
+
 # Editor/IDE
 # .idea/
 # .vscode/
