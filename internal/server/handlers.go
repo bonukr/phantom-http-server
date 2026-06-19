@@ -78,6 +78,13 @@ func (s *Server) handleLogs(c *gin.Context) {
 	c.JSON(http.StatusOK, entries)
 }
 
+func (s *Server) handleClearLogs(c *gin.Context) {
+	s.buf.Clear()
+	s.stats.Reset()
+	s.log.Info("request logs cleared", "client", c.ClientIP())
+	c.Status(http.StatusNoContent)
+}
+
 func (s *Server) handleLogStream(c *gin.Context) {
 	path := c.Query("path")
 	method := c.Query("method")

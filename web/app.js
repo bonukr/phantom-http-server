@@ -285,6 +285,23 @@ function clearFilter() {
     connectStream();
 }
 
+async function clearLogs() {
+    if (!state.logs.length) {
+        toast("삭제할 로그가 없습니다.");
+        return;
+    }
+    if (!confirm("모든 Request Logs를 삭제할까요?")) return;
+    try {
+        await api("DELETE", "/api/logs");
+        state.logs = [];
+        state.selectedLogId = null;
+        renderLogs();
+        toast("로그가 삭제되었습니다.");
+    } catch (e) {
+        toast(e.message, true);
+    }
+}
+
 function togglePause() {
     state.paused = !state.paused;
     const btn = document.getElementById("btn-pause");
@@ -309,6 +326,7 @@ function onFilterChange() {
 }
 
 async function init() {
+    document.getElementById("btn-clear-logs").addEventListener("click", clearLogs);
     document.getElementById("btn-clear-filter").addEventListener("click", clearFilter);
     document.getElementById("btn-pause").addEventListener("click", togglePause);
     document.getElementById("filter-path").addEventListener("change", onFilterChange);

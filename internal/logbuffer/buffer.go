@@ -101,6 +101,13 @@ func (b *Buffer) List(path, method, text string, limit int) []Entry {
 	return out
 }
 
+// Clear removes all stored log entries.
+func (b *Buffer) Clear() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.entries = make([]Entry, 0, b.capacity)
+}
+
 // Paths returns distinct API paths seen in the buffer.
 func (b *Buffer) Paths() []string {
 	b.mu.RLock()

@@ -53,6 +53,7 @@ func (s *Server) routes(r *gin.Engine) {
 		api.GET("/stats", s.handleStats)
 		api.GET("/apis", s.handleAPIs)
 		api.GET("/logs", s.handleLogs)
+		api.DELETE("/logs", s.handleClearLogs)
 		api.GET("/logs/stream", s.handleLogStream)
 	}
 

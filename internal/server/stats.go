@@ -28,6 +28,11 @@ func (s *Stats) RecordRequest(path string) {
 	s.totalRequests.Add(1)
 }
 
+// Reset clears accumulated request counters.
+func (s *Stats) Reset() {
+	s.totalRequests.Store(0)
+}
+
 // Snapshot returns the current stats view.
 func (s *Stats) Snapshot(perPath map[string]int64) Snapshot {
 	return Snapshot{

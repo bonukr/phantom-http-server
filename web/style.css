@@ -273,6 +273,16 @@ body {
     background: var(--warning-muted);
 }
 
+.btn-danger {
+    color: var(--danger);
+    border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+}
+.btn-danger:hover {
+    background: var(--danger-muted);
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
 .btn-icon {
     width: 32px;
     height: 32px;
